@@ -22,7 +22,7 @@ import subprocess
 import sys
 import time
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -69,7 +69,7 @@ def record(con, label, w, res=None, err=None):
     con.execute(
         "INSERT INTO observations (ts,label,product_id,start_date,nights,adults,children,"
         "currency,best_price,initial_price,discount_pct,error) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-        (datetime.now().isoformat(timespec="seconds"), label, w["product_id"],
+        (datetime.now(timezone.utc).isoformat(timespec="seconds"), label, w["product_id"],
          w["start_date"], w["_nights"], w.get("adults", 2), w.get("children", 0),
          res["currency"] if res else None,
          res["best_price"] if res else None,

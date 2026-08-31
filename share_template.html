@@ -103,6 +103,13 @@ button.live[disabled]{opacity:.55;cursor:progress;background:var(--card);
   padding-top:14px}
 .legend span{display:inline-flex;align-items:center;gap:7px}
 svg.spark{width:100%;height:104px;display:block;margin-top:16px;overflow:visible}
+.chartcap{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:12px;color:var(--mut);
+  margin-top:10px;font-variant-numeric:tabular-nums}
+.chartcap .tgt{color:var(--good)}
+.chartflat{margin-top:16px}
+.flatline{height:2px;background:var(--accent);border-radius:2px;opacity:.5}
+.chartnote{font-size:13px;color:var(--mut);margin-top:12px;max-width:62ch}
+.chartnote b{color:var(--ink)}
 a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
 .foot{font-size:13px;color:var(--mut);border-top:1px solid var(--line);padding-top:18px}
 .foot code{font-family:var(--mono);font-size:12px;background:var(--sunk);
@@ -264,12 +271,28 @@ function draw(){
 
 /* ---- tracked week ------------------------------------------------- */
 function spark(pts,target){
-  if(pts.length<2) return '<div style="color:var(--mut);font-size:13px;margin-top:14px">'+
-    'Only one reading so far &mdash; the trend line appears once there are a few.</div>';
+  if(pts.length<2) return '<div class="chartnote">Only one reading so far &mdash; '+
+    'a trend line appears here once there are a few.</div>';
+
+  const ps = pts.map(o=>o.best);
+  const lo0 = Math.min(...ps), hi0 = Math.max(...ps);
+  const d1 = day(pts[0].ts.slice(0,10)), d2 = day(pts[pts.length-1].ts.slice(0,10));
+
+  // A flat line inside a big shaded box reads as a broken chart. Until the
+  // price actually moves, say so plainly instead of drawing empty space.
+  if(hi0 === lo0){
+    return `<div class="chartflat">
+      <div class="flatline"></div>
+      <div class="chartnote"><b>No movement yet.</b> ${pts.length} readings, every one
+        ${fmt(lo0)}, from ${d1}${d1===d2?"":" to "+d2}. The price history chart appears
+        here once the price changes.${target
+          ? " Target is " + fmt(target) + ", " + fmt(lo0-target) + " below today's price."
+          : ""}</div>
+    </div>`;
+  }
+
   const w=760,h=104,p=9;
-  const ps=pts.map(o=>o.best);
-  let lo=Math.min(...ps), hi=Math.max(...ps);
-  if(hi===lo){ lo-=Math.max(1,lo*0.02); hi+=Math.max(1,hi*0.02); }
+  let lo=lo0, hi=hi0;
   if(target!=null){ lo=Math.min(lo,target); hi=Math.max(hi,target); }
   const padR=(hi-lo)*0.14; lo-=padR; hi+=padR;
   const X=i=>p+i*(w-2*p)/(pts.length-1), Y=v=>p+(h-2*p)*(1-(v-lo)/(hi-lo));
@@ -277,12 +300,20 @@ function spark(pts,target){
   const tl=target?`<line x1="${p}" x2="${w-p}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
     stroke="var(--good)" stroke-dasharray="5 4" stroke-width="1.5"/>`:'';
   const end=pts.length-1;
+  const dir = ps[end] - ps[0];
   return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"
-      role="img" aria-label="price history for the tracked week">
+      role="img" aria-label="price history: ${fmt(lo0)} to ${fmt(hi0)} across ${pts.length} readings">
     <path d="${line} L${X(end).toFixed(1)} ${h-p} L${p} ${h-p} Z" fill="var(--accent)" opacity=".10"/>
     ${tl}<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.2"
       stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${X(end).toFixed(1)}" cy="${Y(pts[end].best).toFixed(1)}" r="4" fill="var(--accent)"/></svg>`;
+    <circle cx="${X(end).toFixed(1)}" cy="${Y(pts[end].best).toFixed(1)}" r="4" fill="var(--accent)"/></svg>
+    <div class="chartcap">
+      <span>high ${fmt(hi0)}</span><span>low ${fmt(lo0)}</span>
+      ${target?`<span class="tgt">&#8212;&#8212; target ${fmt(target)}</span>`:""}
+      <span>${pts.length} readings, ${d1} to ${d2}</span>
+      <span class="${dir<0?'good':dir>0?'steep':''}">${dir===0?'net no change'
+        :(dir<0?'net down ':'net up ')+fmt(Math.abs(dir))}</span>
+    </div>`;
 }
 
 function drawTracked(){
