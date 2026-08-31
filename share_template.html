@@ -3,7 +3,8 @@
 :root{
   --ground:#E9EFF4; --card:#FFFFFF; --sunk:#F3F7FA;
   --ink:#0E151B; --mut:#58697A; --line:#D3DFE8; --line2:#E7EEF3;
-  --accent:#14568F; --good:#0B7350; --mid:#2E6FA8; --steep:#9B2C1C;
+  --accent:#14568F; --onAccent:#FFFFFF;
+  --good:#0B7350; --mid:#2E6FA8; --steep:#9B2C1C;
   --noteBg:#FBF3E4; --noteLine:#E6D4B0; --noteInk:#6B4A12;
   --bar:#B9D2E6; --barGood:#8DCFB4; --barSteep:#E5B2A6;
   --display:"Avenir Next","Avenir","Segoe UI",system-ui,sans-serif;
@@ -13,14 +14,16 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#0B1117; --card:#131C25; --sunk:#0F171F;
   --ink:#E4EBF2; --mut:#8A9DAE; --line:#22303C; --line2:#1A2531;
-  --accent:#6BADF2; --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
+  --accent:#6BADF2; --onAccent:#0B1117;
+  --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
   --noteBg:#241E12; --noteLine:#463A22; --noteInk:#E8C98A;
   --bar:#2C4459; --barGood:#255C48; --barSteep:#5C3128;
 }}
 :root[data-theme="dark"]{
   --ground:#0B1117; --card:#131C25; --sunk:#0F171F;
   --ink:#E4EBF2; --mut:#8A9DAE; --line:#22303C; --line2:#1A2531;
-  --accent:#6BADF2; --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
+  --accent:#6BADF2; --onAccent:#0B1117;
+  --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
   --noteBg:#241E12; --noteLine:#463A22; --noteInk:#E8C98A;
   --bar:#2C4459; --barGood:#255C48; --barSteep:#5C3128;
 }
@@ -54,9 +57,8 @@ button{font-family:var(--display);font-size:13px;font-weight:600;color:var(--ink
   background:var(--card);border:1px solid var(--line);border-radius:7px;
   padding:8px 14px;cursor:pointer;letter-spacing:.01em}
 button:hover{border-color:var(--accent)}
-button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-:root[data-theme="dark"] button[aria-pressed="true"],
-:root:not([data-theme="light"]) button[aria-pressed="true"]{color:#0B1117}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);
+  color:var(--onAccent)}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .scroll{overflow-x:auto;margin:0 -22px;padding:0 22px}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:460px}
@@ -71,8 +73,7 @@ tr.mine td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .dow{color:var(--mut);font-size:12px;margin-left:7px}
 .tag{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;
   letter-spacing:.06em;padding:2px 7px;border-radius:4px;margin-left:8px;
-  background:var(--accent);color:#fff;white-space:nowrap}
-:root[data-theme="dark"] .tag,:root:not([data-theme="light"]) .tag{color:#0B1117}
+  background:var(--accent);color:var(--onAccent);white-space:nowrap}
 .grade{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .pip{width:9px;height:9px;flex:none}
 .pip.g{border-radius:50%;background:var(--good)}
