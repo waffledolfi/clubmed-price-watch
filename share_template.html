@@ -1,0 +1,317 @@
+<title>Kiroro Peak Price Watch</title>
+<style>
+:root{
+  --ground:#E9EFF4; --card:#FFFFFF; --sunk:#F3F7FA;
+  --ink:#0E151B; --mut:#58697A; --line:#D3DFE8; --line2:#E7EEF3;
+  --accent:#14568F; --good:#0B7350; --mid:#2E6FA8; --steep:#9B2C1C;
+  --noteBg:#FBF3E4; --noteLine:#E6D4B0; --noteInk:#6B4A12;
+  --bar:#B9D2E6; --barGood:#8DCFB4; --barSteep:#E5B2A6;
+  --display:"Avenir Next","Avenir","Segoe UI",system-ui,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"SF Mono","Menlo","Consolas",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0B1117; --card:#131C25; --sunk:#0F171F;
+  --ink:#E4EBF2; --mut:#8A9DAE; --line:#22303C; --line2:#1A2531;
+  --accent:#6BADF2; --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
+  --noteBg:#241E12; --noteLine:#463A22; --noteInk:#E8C98A;
+  --bar:#2C4459; --barGood:#255C48; --barSteep:#5C3128;
+}}
+:root[data-theme="dark"]{
+  --ground:#0B1117; --card:#131C25; --sunk:#0F171F;
+  --ink:#E4EBF2; --mut:#8A9DAE; --line:#22303C; --line2:#1A2531;
+  --accent:#6BADF2; --good:#46BE8C; --mid:#6BADF2; --steep:#EE8168;
+  --noteBg:#241E12; --noteLine:#463A22; --noteInk:#E8C98A;
+  --bar:#2C4459; --barGood:#255C48; --barSteep:#5C3128;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:40px 20px 64px;display:flex;
+  flex-direction:column;gap:26px}
+h1{font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.02em;
+  margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-.01em;margin:0}
+.lede{color:var(--mut);margin:0;max-width:62ch}
+.stamp{font-family:var(--mono);font-size:12px;color:var(--mut);
+  letter-spacing:.02em;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--good);display:inline-block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px}
+.eyebrow{font-family:var(--display);font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.09em;color:var(--mut)}
+.stats{display:flex;flex-wrap:wrap;gap:26px 34px;align-items:baseline;margin-top:14px}
+.fig{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.fig-xl{font-size:32px;letter-spacing:-.02em}
+.fig-l{font-size:21px}
+.fig-m{font-size:15px}
+.strike{text-decoration:line-through;color:var(--mut)}
+.good{color:var(--good)} .steep{color:var(--steep)} .mid{color:var(--mid)}
+.note{background:var(--noteBg);border:1px solid var(--noteLine);color:var(--noteInk);
+  border-radius:8px;padding:13px 15px;font-size:13.5px}
+.note b{font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font-family:var(--display);font-size:13px;font-weight:600;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:7px;
+  padding:8px 14px;cursor:pointer;letter-spacing:.01em}
+button:hover{border-color:var(--accent)}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] button[aria-pressed="true"],
+:root:not([data-theme="light"]) button[aria-pressed="true"]{color:#0B1117}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.scroll{overflow-x:auto;margin:0 -22px;padding:0 22px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:460px}
+th{font-family:var(--display);font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--mut);text-align:left;padding:0 10px 9px;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--line2);vertical-align:top}
+th.num,td.num{text-align:right}
+tr.mine td{background:var(--sunk)}
+tr.mine td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.wk{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.dow{color:var(--mut);font-size:12px;margin-left:7px}
+.tag{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;padding:2px 7px;border-radius:4px;margin-left:8px;
+  background:var(--accent);color:#fff;white-space:nowrap}
+:root[data-theme="dark"] .tag,:root:not([data-theme="light"]) .tag{color:#0B1117}
+.grade{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pip{width:9px;height:9px;flex:none}
+.pip.g{border-radius:50%;background:var(--good)}
+.pip.b{background:var(--mid)}
+.pip.k{background:var(--steep);transform:rotate(45deg)}
+.pr{display:flex;align-items:center;justify-content:flex-end;gap:7px}
+.sub{font-size:11.5px;color:var(--mut);margin-top:1px}
+.bar{height:6px;border-radius:3px;background:var(--bar);position:relative;
+  margin-top:7px;margin-left:auto;width:104px}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12.5px;color:var(--mut);
+  padding-top:14px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+svg.spark{width:100%;height:104px;display:block;margin-top:16px;overflow:visible}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+.foot{font-size:13px;color:var(--mut);border-top:1px solid var(--line);padding-top:18px}
+.foot code{font-family:var(--mono);font-size:12px;background:var(--sunk);
+  padding:2px 6px;border-radius:4px;border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.mini{background:var(--sunk);border:1px solid var(--line2);border-radius:8px;padding:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:620px){h1{font-size:27px}.fig-xl{font-size:27px}.wrap{padding:28px 15px 48px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Kiroro Peak Price Watch</h1>
+    <p class="lede">Every bookable week of the 2026&ndash;27 winter season at Kiroro Peak,
+      priced for 2 adults across 4-, 5- and 6-night stays, so we can compare like for
+      like and pick one.</p>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <section class="card" id="tracked"></section>
+
+  <div class="note" id="extranote"></div>
+
+  <section class="card">
+    <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:flex-end">
+      <div>
+        <div class="eyebrow">The whole season</div>
+        <h2 id="seasonhead">Every week of the season</h2>
+      </div>
+      <div class="controls">
+        <button id="btnAllin" aria-pressed="false">Show all-in</button>
+        <button id="btnSort" aria-pressed="false">Sort by price</button>
+      </div>
+    </div>
+    <div class="scroll"><table id="tbl"></table></div>
+    <div class="legend">
+      <span><i class="pip g"></i> cheapest third, per night</span>
+      <span><i class="pip b"></i> middle third</span>
+      <span><i class="pip k"></i> priciest third</span>
+      <span id="legendbasis"></span>
+    </div>
+  </section>
+
+  <section class="grid2" id="highlights"></section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const CUR = (D.watches[0] && D.watches[0].currency) || "SGD";
+const fmt = v => (CUR==="SGD"?"S$":CUR+" ") + Math.round(v).toLocaleString();
+const day = s => new Date(s+"T00:00:00").toLocaleDateString("en-GB",
+  {day:"numeric",month:"short",year:"numeric"});
+let allin = false, byPrice = false;
+
+/* ---- season pivot ------------------------------------------------- */
+const LENS = [...new Set(D.season.map(r=>r.nights))].sort((a,b)=>a-b);
+const weeks = {};
+D.season.forEach(r=>{ (weeks[r.start_date] = weeks[r.start_date] || {date:r.start_date,
+  weekday:r.weekday, cells:{}}).cells[r.nights] = r; });
+const rows = Object.values(weeks);
+
+/* every figure on the page follows the all-in toggle, including per-night
+   and the bands, so 5- and 7-night stays stay comparable either way */
+const total = r => r.best_price + (allin ? D.extras : 0);
+const perNight = r => total(r) / r.nights;
+let t1, t2, maxPn;
+function bands(){
+  const pns = D.season.map(perNight).sort((a,b)=>a-b);
+  t1 = pns[Math.floor(pns.length/3)];
+  t2 = pns[Math.floor(2*pns.length/3)];
+  maxPn = pns[pns.length-1];
+}
+const grade = pn => pn<=t1 ? "g" : pn<=t2 ? "b" : "k";
+const gradeName = g => g==="g"?"cheapest third":g==="b"?"middle third":"priciest third";
+const mine = new Set(D.watches.map(w=>w.start_date));
+
+function cellHTML(r){
+  if(!r) return '<td class="num"><span style="color:var(--mut)">&mdash;</span>'+
+    '<div class="sub">not bookable</div></td>';
+  const pn = perNight(r), g = grade(pn);
+  const cls = g==="g"?"good":g==="k"?"steep":"mid";
+  const w = Math.max(4, 100*pn/maxPn);
+  const fill = g==="g"?"var(--barGood)":g==="k"?"var(--barSteep)":"var(--accent)";
+  return `<td class="num">
+    <div class="pr"><span class="pip ${g}" title="${gradeName(g)}"></span>
+      <span class="fig fig-m ${cls}">${fmt(total(r))}</span></div>
+    <div class="sub fig">${fmt(pn)}/night</div>
+    <div class="bar" role="img" aria-label="${fmt(pn)} per night, ${gradeName(g)}">
+      <i style="width:${w.toFixed(1)}%;background:${fill}"></i></div></td>`;
+}
+
+function draw(){
+  const list = rows.slice();
+  if(byPrice){
+    const key = r => Math.min(...LENS.map(n=>r.cells[n]?perNight(r.cells[n]):Infinity));
+    list.sort((a,b)=>key(a)-key(b));
+  } else list.sort((a,b)=>a.date<b.date?-1:1);
+
+  let head = '<tr><th>Week starting</th>';
+  LENS.forEach(n=>{ head += `<th class="num">${n} nights</th>`; });
+  head += '</tr>';
+
+  const body = list.map(r=>{
+    const tag = mine.has(r.date) ? '<span class="tag">Watching</span>' : '';
+    return `<tr class="${mine.has(r.date)?'mine':''}">
+      <td><span class="wk">${day(r.date)}</span><span class="dow">${r.weekday}</span>${tag}</td>
+      ${LENS.map(n=>cellHTML(r.cells[n])).join('')}</tr>`;
+  }).join('');
+  document.getElementById('tbl').innerHTML = head + body;
+}
+
+/* ---- tracked week ------------------------------------------------- */
+function spark(pts,target){
+  if(pts.length<2) return '<div style="color:var(--mut);font-size:13px;margin-top:14px">'+
+    'Only one reading so far &mdash; the trend line appears once there are a few.</div>';
+  const w=760,h=104,p=9;
+  const ps=pts.map(o=>o.best);
+  let lo=Math.min(...ps), hi=Math.max(...ps);
+  if(hi===lo){ lo-=Math.max(1,lo*0.02); hi+=Math.max(1,hi*0.02); }
+  if(target!=null){ lo=Math.min(lo,target); hi=Math.max(hi,target); }
+  const padR=(hi-lo)*0.14; lo-=padR; hi+=padR;
+  const X=i=>p+i*(w-2*p)/(pts.length-1), Y=v=>p+(h-2*p)*(1-(v-lo)/(hi-lo));
+  const line=pts.map((o,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(o.best).toFixed(1)).join(' ');
+  const tl=target?`<line x1="${p}" x2="${w-p}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
+    stroke="var(--good)" stroke-dasharray="5 4" stroke-width="1.5"/>`:'';
+  const end=pts.length-1;
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"
+      role="img" aria-label="price history for the tracked week">
+    <path d="${line} L${X(end).toFixed(1)} ${h-p} L${p} ${h-p} Z" fill="var(--accent)" opacity=".10"/>
+    ${tl}<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.2"
+      stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${X(end).toFixed(1)}" cy="${Y(pts[end].best).toFixed(1)}" r="4" fill="var(--accent)"/></svg>`;
+}
+
+function drawTracked(){
+  const el=document.getElementById('tracked');
+  el.innerHTML = D.watches.map(w=>{
+    if(!w.points.length) return `<div class="eyebrow">Watching</div><h2>${w.label}</h2>
+      <p class="lede">No reading recorded yet.</p>`;
+    const cur=w.points[w.points.length-1], base=cur.best+(allin?w.extras:0);
+    const tgt=w.target?(w.target+(allin?w.extras:0)):null;
+    const hit=w.target&&cur.best<=w.target;
+    const gap=tgt?base-tgt:0;
+    return `<div class="eyebrow">Watching</div>
+      <h2>${w.label}</h2>
+      <p class="lede" style="margin-top:4px">${day(w.start_date)} &rarr; ${day(w.end_date)}
+        &middot; ${w.nights} nights &middot; ${w.adults} adults &middot;
+        <a href="${w.url}" target="_blank" rel="noopener">book on clubmed.com.sg</a></p>
+      <div class="stats">
+        <div><div class="eyebrow">${allin?'All-in now':'Club Med now'}</div>
+          <div class="fig fig-xl">${fmt(base)}</div></div>
+        <div><div class="eyebrow">Was listed</div>
+          <div class="fig fig-l strike">${fmt(cur.list+(allin?w.extras:0))}</div></div>
+        ${tgt?`<div><div class="eyebrow">Target</div>
+          <div class="fig fig-l ${hit?'good':''}">${fmt(tgt)}</div></div>
+        <div><div class="eyebrow">${hit?'Status':'Still to fall'}</div>
+          <div class="fig fig-l ${hit?'good':'steep'}">${hit?'target hit':fmt(gap)}</div></div>`:''}
+      </div>
+      ${spark(w.points,w.target)}`;
+  }).join('');
+}
+
+/* ---- highlights --------------------------------------------------- */
+function drawHighlights(){
+  const flat=D.season.slice().sort((a,b)=>total(a)-total(b));
+  const cheap=flat[0], dear=flat[flat.length-1];
+  const w=D.watches[0];
+  const mineRow=D.season.find(r=>w&&r.start_date===w.start_date&&r.nights===w.nights);
+  const cards=[
+    ['Cheapest week found',cheap,'good',
+     `${cheap.nights} nights from ${day(cheap.start_date)}`],
+    ['Priciest week found',dear,'steep',
+     `${dear.nights} nights from ${day(dear.start_date)} &mdash; peak season`],
+  ];
+  if(mineRow) cards.splice(1,0,['The week we are watching',mineRow,'mid',
+     `${mineRow.nights} nights from ${day(mineRow.start_date)}`]);
+  document.getElementById('highlights').innerHTML = cards.map(([t,r,c,sub])=>
+    `<div class="mini"><div class="eyebrow">${t}</div>
+      <div class="fig fig-l ${c}" style="margin:6px 0 2px">${fmt(total(r))}</div>
+      <div style="font-size:12.5px;color:var(--mut)">${sub}</div></div>`).join('');
+}
+
+/* ---- chrome ------------------------------------------------------- */
+function drawStamp(){
+  const t=new Date(D.generated).toLocaleString("en-GB",
+    {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  document.getElementById('stamp').innerHTML =
+    `<span><span class="dot"></span> snapshot taken ${t}</span>
+     <span>refreshed automatically every 2 days</span>
+     <span>prices in ${CUR}, 2 adults, resort only (no flights)</span>`;
+  document.getElementById('extranote').innerHTML =
+    `<b>Add about ${fmt(D.extras)} on top of every price here.</b> ${D.extras_note}.
+     Club Med does not charge these, so they never appear in the figures below unless
+     you switch on <b>Show all-in</b>.`;
+  const lens = LENS.join(", ").replace(/, ([^,]*)$/, " and $1");
+  const dows = [...new Set(rows.map(r=>r.weekday))];
+  document.getElementById('seasonhead').textContent =
+    (dows.length===1 ? "Every " + dows[0] + "sday start" : "Every week") +
+    ", " + lens + " nights";
+  document.getElementById('foot').innerHTML =
+    `<b>This page is a snapshot, not a live feed.</b> A published page cannot call
+     Club Med&rsquo;s API directly, so nothing here refreshes when you open it &mdash; the
+     figures are whatever was read on the date stamped at the top. A scheduled job
+     re-reads every price and republishes this page <b>every two days</b>, and it can
+     also be run on demand.`;
+}
+
+function legendBasis(){
+  const lens = LENS.join(", ").replace(/, ([^,]*)$/, " and $1");
+  document.getElementById('legendbasis').textContent =
+    "Bars are cost per night, so " + lens + "-night stays compare fairly" +
+    (allin ? ", with the " + fmt(D.extras) + " included." : ".");
+}
+function redraw(){ bands(); legendBasis(); draw(); drawTracked(); drawHighlights(); }
+document.getElementById('btnAllin').addEventListener('click', e=>{
+  allin=!allin; e.currentTarget.setAttribute('aria-pressed',String(allin));
+  e.currentTarget.textContent = allin ? 'Show Club Med only' : 'Show all-in';
+  redraw();
+});
+document.getElementById('btnSort').addEventListener('click', e=>{
+  byPrice=!byPrice; e.currentTarget.setAttribute('aria-pressed',String(byPrice));
+  e.currentTarget.textContent = byPrice ? 'Sort by date' : 'Sort by price';
+  draw();
+});
+drawStamp(); redraw();
+</script>

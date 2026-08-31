@@ -1,0 +1,96 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Club Med price watch</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#f6f6f4;--card:#fff;--ink:#1c1c1a;--mut:#6b6b66;--line:#e3e3df;--good:#0f7b4f;--bad:#a8321f;--acc:#1a5fb4;--note:#fdf4e3;--noteline:#eadcbe}
+@media(prefers-color-scheme:dark){:root{--bg:#131316;--card:#1c1c20;--ink:#eceae5;--mut:#9d9d97;--line:#31313a;--good:#54c996;--bad:#f08a72;--acc:#79b0f5;--note:#2b2618;--noteline:#4a4028}}
+*{box-sizing:border-box}
+body{margin:0;padding:32px 20px;background:var(--bg);color:var(--ink);
+font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:880px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px}
+.card h2{font-size:16px;margin:0 0 2px}
+.meta{color:var(--mut);font-size:13px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:28px;align-items:baseline;margin-bottom:16px}
+.big{font-size:30px;font-weight:600;letter-spacing:-.5px}
+.lab{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.strike{text-decoration:line-through;color:var(--mut)}
+.big2{font-size:22px;font-weight:600;letter-spacing:-.3px;color:var(--mut)}
+.foot{background:var(--note);border:1px solid var(--noteline);border-radius:8px;
+padding:10px 12px;font-size:13px;margin-bottom:16px;color:var(--ink)}
+.foot strong{color:var(--bad)}
+.chg{font-size:14px;font-weight:600}
+.dn{color:var(--good)}.up{color:var(--bad)}
+svg{width:100%;height:120px;display:block;overflow:visible}
+a{color:var(--acc)}
+.empty{color:var(--mut);font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+td,th{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mut);font-weight:500}
+.scroll{overflow-x:auto}
+</style></head><body><div class="wrap">
+<h1>Club Med price watch</h1>
+<div class="sub">Last checked 31 Aug 2026, 11:39</div>
+<div id="out"></div>
+</div>
+<script>
+const DATA = {"Kiroro Peak - Easter week 2027": {"points": [{"ts": "2026-08-31T10:55:50", "best": 5132.0, "list": 6392.0}, {"ts": "2026-08-31T10:58:02", "best": 5132.0, "list": 6392.0}, {"ts": "2026-08-31T11:07:36", "best": 5132.0, "list": 6392.0}, {"ts": "2026-08-31T11:31:45", "best": 5132.0, "list": 6392.0}, {"ts": "2026-08-31T11:39:01", "best": 5132.0, "list": 6392.0}], "currency": "SGD", "target": 4800, "extras": 1000.0, "extras_note": "snowboard set, 4 days, 2 adults + airport transfers - paid separately, NOT in the Club Med price", "start_date": "2027-03-30", "nights": 5, "adults": 2, "url": "https://www.clubmed.com.sg/r/kiroro-peak/w?adults=2&children=0&start_date=2027-03-30&end_date=2027-04-04"}};
+const fmt = (c,v) => (c==='SGD'?'S$':c+' ')+Math.round(v).toLocaleString();
+const out = document.getElementById('out');
+
+function spark(pts, target){
+  if(pts.length<2) return '';
+  const w=800,h=120,pad=8;
+  const vals=pts.map(p=>p.best).concat(target?[target]:[]);
+  let lo=Math.min(...vals), hi=Math.max(...vals);
+  if(hi===lo){hi=lo+1;}
+  const x=i=>pad+i*(w-2*pad)/(pts.length-1);
+  const y=v=>pad+(h-2*pad)*(1-(v-lo)/(hi-lo));
+  const line=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p.best).toFixed(1)).join(' ');
+  const area=line+` L${x(pts.length-1).toFixed(1)} ${h-pad} L${pad} ${h-pad} Z`;
+  const tl = target? `<line x1="${pad}" x2="${w-pad}" y1="${y(target).toFixed(1)}" y2="${y(target).toFixed(1)}"
+      stroke="var(--good)" stroke-dasharray="4 4" stroke-width="1.5"/>`:'';
+  const dots = pts.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.best).toFixed(1)}" r="2.5" fill="var(--acc)"/>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="price history">
+    <path d="${area}" fill="var(--acc)" opacity=".10"/>
+    ${tl}<path d="${line}" fill="none" stroke="var(--acc)" stroke-width="2"
+      stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg>`;
+}
+
+const keys = Object.keys(DATA);
+if(!keys.length){ out.innerHTML='<div class="card empty">No watches configured.</div>'; }
+keys.forEach(label=>{
+  const d=DATA[label], p=d.points, c=d.currency;
+  if(!p.length){
+    out.insertAdjacentHTML('beforeend',
+      `<div class="card"><h2>${label}</h2><div class="empty">No successful reading yet.</div></div>`);
+    return;
+  }
+  const cur=p[p.length-1], first=p[0];
+  const diff=cur.best-first.best;
+  const chg = p.length>1 ? `<div><div class="lab">Since ${first.ts.slice(0,10)}</div>
+      <div class="chg ${diff<0?'dn':diff>0?'up':''}">${diff===0?'no change':(diff<0?'▼ ':'▲ ')+fmt(c,Math.abs(diff))}</div></div>`:'';
+  const tgt = d.target ? `<div><div class="lab">Target</div><div class="chg ${cur.best<=d.target?'dn':''}">${fmt(c,d.target)}${cur.best<=d.target?' — hit':''}</div></div>`:'';
+  const allin = d.extras ? `<div><div class="lab">Budget all-in</div><div class="big2">${fmt(c,cur.best+d.extras)}</div></div>`:'';
+  const foot = d.extras ? `<div class="foot"><strong>+ ${fmt(c,d.extras)} you pay separately.</strong>
+      ${d.extras_note}. The prices above are the Club Med booking cost only.</div>`:'';
+  const rows = p.slice().reverse().slice(0,12).map(r=>
+     `<tr><td>${r.ts.replace('T',' ').slice(0,16)}</td><td>${fmt(c,r.best)}</td><td class="strike">${fmt(c,r.list)}</td></tr>`).join('');
+  out.insertAdjacentHTML('beforeend', `<div class="card">
+    <h2>${label}</h2>
+    <div class="meta">${d.start_date} · ${d.nights} nights · ${d.adults} adults ·
+      <a href="${d.url}" target="_blank" rel="noopener">open on clubmed.com.sg</a></div>
+    <div class="row">
+      <div><div class="lab">Current</div><div class="big">${fmt(c,cur.best)}</div></div>
+      ${allin}
+      <div><div class="lab">List price</div><div class="chg strike">${fmt(c,cur.list)}</div></div>
+      ${chg}${tgt}
+    </div>
+    ${foot}
+    ${spark(p, d.target)}
+    <div class="scroll"><table><tr><th>Checked</th><th>Best</th><th>List</th></tr>${rows}</table></div>
+  </div>`);
+});
+</script></body></html>

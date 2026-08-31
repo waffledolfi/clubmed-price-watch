@@ -1,0 +1,26 @@
+{
+  "locale": "en-SG",
+  "site": "https://www.clubmed.com.sg",
+  "extras": {
+    "amount": 1000,
+    "note": "snowboard set, 4 days, 2 adults + airport transfers - paid separately, NOT in the Club Med price"
+  },
+  "notify": {
+    "macos": true,
+    "webhook_url": ""
+  },
+  "watches": [
+    {
+      "label": "Kiroro Peak - Easter week 2027",
+      "product_id": "KIPC_WINTER",
+      "slug": "kiroro-peak",
+      "season": "w",
+      "start_date": "2027-03-30",
+      "end_date": "2027-04-04",
+      "adults": 2,
+      "children": 0,
+      "departure_option_id": null,
+      "target_price": 4800
+    }
+  ]
+}
