@@ -149,7 +149,32 @@ Two alternatives that skip the Routine tab:
 * Just ask Claude to "refresh and republish the Kiroro price watch" — it does
   the whole thing.
 
-## Hosting on GitHub Pages
+## Hosting
+
+The page is served by **Vercel**, deployed straight from this GitHub repo.
+GitHub Actions does the price scanning and commits the rebuilt page; Vercel
+notices the commit and redeploys. Neither this Mac nor the Claude app is
+involved.
+
+    Actions (every 2 days)  ->  commit docs/index.html  ->  Vercel deploys
+
+`vercel.json` pins the settings, so Vercel does not have to guess: no build
+step, no install step, serve the `docs/` directory as static files.
+
+### Vercel setup
+
+1. vercel.com → **Add New…** → **Project**
+2. **Import** `waffledolfi/clubmed-price-watch` (authorise GitHub if asked)
+3. Framework Preset: **Other**. Leave build and install commands empty —
+   `vercel.json` already sets them.
+4. **Deploy**
+5. Project → **Settings** → **Domains** to set the subdomain, e.g.
+   `kiroro-price-watch.vercel.app`
+
+GitHub Pages is not used. Skip the Pages step; the `docs/` folder is shared by
+both approaches, so switching later costs nothing.
+
+## Hosting on GitHub Pages (unused alternative)
 
 `publish.py` writes two files from the same template:
 
