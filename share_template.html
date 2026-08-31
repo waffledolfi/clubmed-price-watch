@@ -179,7 +179,12 @@ async function fetchPrice(productId, startDate, nights){
     product_id: productId,
     api_key: D.api.key,
   });
+  // Club Med sends Cache-Control: max-age=600 with no Vary: Origin, so a
+  // cached copy can carry another origin's Access-Control-Allow-Origin and
+  // the browser then rejects it. no-store keeps every reading off the cache.
   const res = await fetch(D.api.endpoint + "?" + q, {
+    mode: "cors",
+    cache: "no-store",
     headers: { "Accept-Language": D.api.locale, "Accept": "application/json" },
   });
   if (!res.ok) throw new Error("Club Med returned " + res.status);
