@@ -171,21 +171,63 @@ up. Override deliberately with `ALLOW_SPARSE=1`.
 
 ### One-time setup
 
-1. Create a **public** repo on github.com (public is what makes Pages and
-   Actions free). Do not add a README, licence or .gitignore.
-2. Connect and push:
+**1. Create the repo.** On github.com: **+** (top right) → **New repository**.
 
-       git remote add origin https://github.com/<you>/<repo>.git
-       git push -u origin main
+* Name: `clubmed-price-watch` (or anything)
+* Visibility: **Public** — this is what makes Pages and Actions free
+* Leave "Add a README", ".gitignore" and "licence" **unticked** — this folder
+  already has them, and adding them causes a push conflict
+* **Create repository**
 
-3. Repo **Settings → Pages** → Source: *Deploy from a branch*, Branch: `main`,
-   Folder: `/docs`. Save.
-4. Repo **Settings → Actions → General** → Workflow permissions → *Read and
-   write permissions*. Save. Without this the job cannot commit.
-5. **Actions → Refresh Kiroro prices → Run workflow** to test it end to end.
+**2. Push.** From this folder:
 
-The page then lives at `https://<you>.github.io/<repo>/` — a plain public URL,
-no login, works on any phone.
+    git remote add origin https://github.com/waffledolfi/clubmed-price-watch.git
+    git push -u origin main
+
+Git will ask for a username and password. **The password is not your GitHub
+password** — GitHub stopped accepting those. It must be a Personal Access Token:
+
+* github.com → your avatar → **Settings** → **Developer settings** (very bottom
+  of the left menu) → **Personal access tokens** → **Tokens (classic)** →
+  **Generate new token (classic)**
+* Note: `clubmed-price-watch`, Expiration: your choice
+* Tick the **`repo`** scope (that alone is enough)
+* **Generate token**, copy it — it is shown once
+* Paste it as the *password* at the git prompt; the username is `waffledolfi`
+
+macOS stores it in the keychain, so you are asked only once.
+
+**3. Turn on Pages.** Repo → **Settings** → **Pages** (left menu)
+
+* Source: **Deploy from a branch**
+* Branch: **main**, Folder: **/docs**
+* **Save**
+
+**4. Let the workflow commit.** Repo → **Settings** → **Actions** → **General**
+→ scroll to **Workflow permissions** → **Read and write permissions** → **Save**.
+
+Without this the job runs, fetches prices, then fails on the final push. This is
+the step most people miss.
+
+**5. Test it.** Repo → **Actions** tab → **Refresh Kiroro prices** (left) →
+**Run workflow** → **Run workflow**. It takes about 4 minutes.
+
+Your page is then at:
+
+    https://waffledolfi.github.io/clubmed-price-watch/
+
+Pages can take a few minutes to serve the first time.
+
+### If something goes wrong
+
+| Symptom | Cause |
+|---|---|
+| Push rejected, `403` or `Authentication failed` | Token missing the `repo` scope, or you typed your account password instead of the token |
+| Push rejected, `fetch first` / `non-fast-forward` | You ticked "Add a README" when creating the repo. `git pull --rebase origin main` then push again |
+| Actions job red on the last step | Workflow permissions still read-only — step 4 |
+| Page 404s | Pages folder not set to `/docs`, or give it a few minutes |
+| Job fails with "Only N season quotes" | The safety guard fired. Club Med's API may have changed, or blocked the datacenter IP. The previously published page stays up |
+| Prices in the wrong currency | The runner's locale differs. The `Accept-Language: en-SG` header is set in `clubmed.py`; check it is still being sent |
 
 ## Scheduling notes
 
