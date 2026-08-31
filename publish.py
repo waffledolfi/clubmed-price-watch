@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import clubmed  # noqa: E402
 from clubmed import booking_url, parse_date  # noqa: E402
 from watch import DB, extras_for, load_config  # noqa: E402
 
@@ -38,6 +39,9 @@ def collect():
             "adults": w.get("adults", 2),
             "target": w.get("target_price"),
             "extras": w_amt,
+            "product_id": w["product_id"],
+            "children": w.get("children", 0),
+            "departure_option_id": w.get("departure_option_id"),
             "url": booking_url(w["product_id"], w.get("slug", ""), w["start_date"],
                                w["_nights"], w.get("adults", 2), w.get("children", 0),
                                cfg.get("site"), w.get("season", "w")),
@@ -53,10 +57,20 @@ def collect():
         scanned_at = d.get("generated")
         for r in d["results"]:
             r["per_night"] = round(r["best_price"] / r["nights"], 2)
+            r["product_id"] = d.get("product_id")
             season.append(r)
 
     return {
         "generated": datetime.now().isoformat(timespec="seconds"),
+        # lets the page re-query Club Med live from the browser; their API
+        # reflects the request Origin, so no proxy is needed
+        "api": {
+            "endpoint": clubmed.API,
+            "key": clubmed.API_KEY,
+            "locale": cfg.get("locale", "en-SG"),
+            "adults": cfg["watches"][0].get("adults", 2) if cfg["watches"] else 2,
+            "children": cfg["watches"][0].get("children", 0) if cfg["watches"] else 0,
+        },
         "scanned_at": scanned_at,
         "extras": ex_amt,
         "extras_note": ex_note,

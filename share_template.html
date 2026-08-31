@@ -84,6 +84,21 @@ tr.mine td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .bar{height:6px;border-radius:3px;background:var(--bar);position:relative;
   margin-top:7px;margin-left:auto;width:104px}
 .bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;display:block}
+button.live{border-color:var(--accent);color:var(--accent)}
+button.live:hover{background:var(--accent);color:var(--onAccent)}
+button.live[disabled]{opacity:.55;cursor:progress;background:var(--card);
+  color:var(--mut);border-color:var(--line)}
+.liverow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:18px;
+  padding-top:16px;border-top:1px solid var(--line2)}
+.livemsg{font-size:13px;color:var(--mut)}
+.livemsg.err{color:var(--steep)}
+.livemsg.ok{color:var(--good)}
+.livedot{width:6px;height:6px;border-radius:50%;background:var(--good);
+  display:inline-block;flex:none}
+.livewarn{background:var(--noteBg);border:1px solid var(--noteLine);color:var(--noteInk);
+  border-radius:8px;padding:12px 14px;font-size:13px;margin:14px 0 0}
+.livewarn b{font-weight:700}
+.livewarn .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12.5px;color:var(--mut);
   padding-top:14px}
 .legend span{display:inline-flex;align-items:center;gap:7px}
@@ -120,8 +135,10 @@ a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
       <div class="controls">
         <button id="btnAllin" aria-pressed="false">Show all-in</button>
         <button id="btnSort" aria-pressed="false">Sort by price</button>
+        <button id="btnLiveAll" class="live">Check every week live</button>
       </div>
     </div>
+    <div class="livewarn" id="livewarn" hidden></div>
     <div class="scroll"><table id="tbl"></table></div>
     <div class="legend">
       <span><i class="pip g"></i> cheapest third, per night</span>
@@ -144,6 +161,40 @@ const day = s => new Date(s+"T00:00:00").toLocaleDateString("en-GB",
   {day:"numeric",month:"short",year:"numeric"});
 let allin = false, byPrice = false;
 
+/* ---- live lookups --------------------------------------------------
+   Club Med's API reflects the request Origin, so the browser can query it
+   directly. Every live reading is held in `live` and overrides the
+   committed snapshot for whoever is looking at the page. Nothing is saved:
+   a reload returns to the snapshot the scheduled job published. */
+const live = new Map();                       // "startDate|nights" -> {best,initial,at}
+const liveKey = (d, n) => d + "|" + n;
+
+function ymd(d){ return d.replace(/-/g, ""); }
+
+async function fetchPrice(productId, startDate, nights){
+  const q = new URLSearchParams({
+    number_attendees: String(D.api.adults + D.api.children),
+    first_date: ymd(startDate),
+    duration: String(nights),
+    product_id: productId,
+    api_key: D.api.key,
+  });
+  const res = await fetch(D.api.endpoint + "?" + q, {
+    headers: { "Accept-Language": D.api.locale, "Accept": "application/json" },
+  });
+  if (!res.ok) throw new Error("Club Med returned " + res.status);
+  const body = await res.json();
+  if (!Array.isArray(body) || !body.length) throw new Error("no availability");
+  const trip = ((body[0].price || {}).per_trip) || {};
+  if (trip.best_price == null) throw new Error("no price");
+  const fees = trip.fees_amount || 0;
+  return {
+    best: trip.best_price + fees,
+    initial: (trip.initial_price != null ? trip.initial_price : trip.best_price) + fees,
+    at: new Date().toISOString(),
+  };
+}
+
 /* ---- season pivot ------------------------------------------------- */
 const LENS = [...new Set(D.season.map(r=>r.nights))].sort((a,b)=>a-b);
 const weeks = {};
@@ -153,7 +204,11 @@ const rows = Object.values(weeks);
 
 /* every figure on the page follows the all-in toggle, including per-night
    and the bands, so 5- and 7-night stays stay comparable either way */
-const total = r => r.best_price + (allin ? D.extras : 0);
+function basePrice(r){
+  const l = live.get(liveKey(r.start_date, r.nights));
+  return l ? l.best : r.best_price;
+}
+const total = r => basePrice(r) + (allin ? D.extras : 0);
 const perNight = r => total(r) / r.nights;
 let t1, t2, maxPn;
 function bands(){
@@ -171,11 +226,12 @@ function cellHTML(r){
     '<div class="sub">not bookable</div></td>';
   const pn = perNight(r), g = grade(pn);
   const cls = g==="g"?"good":g==="k"?"steep":"mid";
+  const isLive = live.has(liveKey(r.start_date, r.nights));
   const w = Math.max(4, 100*pn/maxPn);
   const fill = g==="g"?"var(--barGood)":g==="k"?"var(--barSteep)":"var(--accent)";
   return `<td class="num">
     <div class="pr"><span class="pip ${g}" title="${gradeName(g)}"></span>
-      <span class="fig fig-m ${cls}">${fmt(total(r))}</span></div>
+      <span class="fig fig-m ${cls}">${fmt(total(r))}</span>${isLive?'<span class="livedot" title="live reading"></span>':''}</div>
     <div class="sub fig">${fmt(pn)}/night</div>
     <div class="bar" role="img" aria-label="${fmt(pn)} per night, ${gradeName(g)}">
       <i style="width:${w.toFixed(1)}%;background:${fill}"></i></div></td>`;
@@ -229,7 +285,9 @@ function drawTracked(){
   el.innerHTML = D.watches.map(w=>{
     if(!w.points.length) return `<div class="eyebrow">Watching</div><h2>${w.label}</h2>
       <p class="lede">No reading recorded yet.</p>`;
-    const cur=w.points[w.points.length-1], base=cur.best+(allin?w.extras:0);
+    const lv = live.get(liveKey(w.start_date, w.nights));
+    const cur = lv ? {best: lv.best, list: lv.initial} : w.points[w.points.length-1];
+    const base = cur.best + (allin?w.extras:0);
     const tgt=w.target?(w.target+(allin?w.extras:0)):null;
     const hit=w.target&&cur.best<=w.target;
     const gap=tgt?base-tgt:0;
@@ -248,7 +306,14 @@ function drawTracked(){
         <div><div class="eyebrow">${hit?'Status':'Still to fall'}</div>
           <div class="fig fig-l ${hit?'good':'steep'}">${hit?'target hit':fmt(gap)}</div></div>`:''}
       </div>
-      ${spark(w.points,w.target)}`;
+      ${spark(w.points,w.target)}
+      <div class="liverow">
+        <button class="live" data-live-week="${w.start_date}|${w.nights}|${w.product_id}">
+          Check live price</button>
+        <span class="livemsg" id="livemsg">${lv
+          ? "Live reading just now &mdash; " + fmt(lv.best) + " from Club Med."
+          : "Figures above are from the snapshot. One request to Club Med."}</span>
+      </div>`;
   }).join('');
 }
 
@@ -314,5 +379,89 @@ document.getElementById('btnSort').addEventListener('click', e=>{
   e.currentTarget.textContent = byPrice ? 'Sort by date' : 'Sort by price';
   draw();
 });
+/* ---- live-refresh handlers ---------------------------------------- */
+const PACE_MS = 400;          // gap between season requests, deliberately slow
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setMsg(el, text, cls){
+  if(!el) return;
+  el.className = "livemsg" + (cls ? " " + cls : "");
+  el.innerHTML = text;
+}
+
+// one week, one request
+document.addEventListener("click", async e => {
+  const btn = e.target.closest("[data-live-week]");
+  if(!btn) return;
+  const [start, nights, pid] = btn.dataset.liveWeek.split("|");
+  const msg = document.getElementById("livemsg");
+  btn.disabled = true;
+  setMsg(msg, "Asking Club Med\u2026");
+  try {
+    const r = await fetchPrice(pid, start, Number(nights));
+    const prev = D.watches[0].points[D.watches[0].points.length-1].best;
+    live.set(liveKey(start, Number(nights)), r);
+    const diff = r.best - prev;
+    const w = D.watches[0];
+    const note = diff === 0 ? "unchanged since the snapshot"
+      : (diff < 0 ? "down " : "up ") + fmt(Math.abs(diff)) + " since the snapshot";
+    redraw();
+    setMsg(document.getElementById("livemsg"),
+      "Live now: <b>" + fmt(r.best) + "</b> \u2014 " + note +
+      (w.target && r.best <= w.target ? ". <b>Target hit.</b>" : "."),
+      diff < 0 || (w.target && r.best <= w.target) ? "ok" : "");
+  } catch(err){
+    setMsg(document.getElementById("livemsg"),
+      "Could not reach Club Med (" + err.message + "). Showing the snapshot.", "err");
+  } finally {
+    const b = document.querySelector("[data-live-week]");
+    if(b) b.disabled = false;
+  }
+});
+
+// whole season, one request per cell -- gated behind a warning
+const warn = document.getElementById("livewarn");
+document.getElementById("btnLiveAll").addEventListener("click", () => {
+  if(!warn.hidden) return;
+  const n = D.season.length;
+  warn.hidden = false;
+  warn.innerHTML = `<b>That is ${n} separate requests to Club Med</b>, one per week and
+    stay length, spaced ${PACE_MS/1000}s apart so it stays polite \u2014 about
+    ${Math.ceil(n*PACE_MS/1000)} seconds. The page already refreshes itself every
+    two days, so only do this if you need prices as of right now.
+    <div class="row">
+      <button id="liveGo" class="live">Yes, check all ${n}</button>
+      <button id="liveNo">Cancel</button>
+      <span class="livemsg" id="liveprog"></span>
+    </div>`;
+  document.getElementById("liveNo").onclick = () => {
+    warn.hidden = true; warn.innerHTML = "";
+  };
+  document.getElementById("liveGo").onclick = async ev => {
+    const go = ev.currentTarget, prog = document.getElementById("liveprog");
+    go.disabled = true;
+    document.getElementById("liveNo").disabled = true;
+    document.getElementById("btnLiveAll").disabled = true;
+    let done = 0, failed = 0, cheaper = 0;
+    for(const r of D.season){
+      try {
+        const res = await fetchPrice(r.product_id, r.start_date, r.nights);
+        if(res.best < r.best_price) cheaper++;
+        live.set(liveKey(r.start_date, r.nights), res);
+      } catch(err){ failed++; }
+      done++;
+      setMsg(prog, done + " of " + D.season.length + " checked\u2026");
+      if(done % 5 === 0) redraw();
+      await sleep(PACE_MS);
+    }
+    redraw();
+    setMsg(prog, "Done. " + (D.season.length - failed) + " live" +
+      (failed ? ", " + failed + " unavailable" : "") +
+      (cheaper ? ", " + cheaper + " cheaper than the snapshot" : "") + ".",
+      cheaper ? "ok" : "");
+    document.getElementById("btnLiveAll").disabled = false;
+  };
+});
+
 drawStamp(); redraw();
 </script>
