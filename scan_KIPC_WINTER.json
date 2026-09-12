@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-10T01:13:03",
+  "generated": "2026-09-12T01:17:17",
   "product_id": "KIPC_WINTER",
   "range": [
     "2026-12-01",
@@ -142,24 +142,6 @@
       "weekday": "Tue"
     },
     {
-      "start_date": "2027-01-05",
-      "nights": 4,
-      "best_price": 9272,
-      "initial_price": 9272,
-      "currency": "SGD",
-      "discount_pct": 0.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2027-01-05",
-      "nights": 5,
-      "best_price": 10922,
-      "initial_price": 11492,
-      "currency": "SGD",
-      "discount_pct": 5.0,
-      "weekday": "Tue"
-    },
-    {
       "start_date": "2027-01-19",
       "nights": 4,
       "best_price": 9950,
@@ -288,8 +270,8 @@
     {
       "start_date": "2027-02-16",
       "nights": 6,
-      "best_price": 10662,
-      "initial_price": 11218,
+      "best_price": 13828,
+      "initial_price": 14550,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -376,6 +358,24 @@
       "weekday": "Tue"
     },
     {
+      "start_date": "2027-03-16",
+      "nights": 5,
+      "best_price": 12220,
+      "initial_price": 12858,
+      "currency": "SGD",
+      "discount_pct": 5.0,
+      "weekday": "Tue"
+    },
+    {
+      "start_date": "2027-03-16",
+      "nights": 6,
+      "best_price": 14708,
+      "initial_price": 15476,
+      "currency": "SGD",
+      "discount_pct": 5.0,
+      "weekday": "Tue"
+    },
+    {
       "start_date": "2027-03-23",
       "nights": 4,
       "best_price": 5534,
@@ -387,8 +387,8 @@
     {
       "start_date": "2027-03-23",
       "nights": 5,
-      "best_price": 6830,
-      "initial_price": 7578,
+      "best_price": 6510,
+      "initial_price": 7222,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -396,8 +396,8 @@
     {
       "start_date": "2027-03-23",
       "nights": 6,
-      "best_price": 8112,
-      "initial_price": 9002,
+      "best_price": 7732,
+      "initial_price": 8578,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
