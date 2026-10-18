@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-16T01:32:07",
+  "generated": "2026-10-18T01:14:50",
   "product_id": "KIPC_WINTER",
   "range": [
     "2026-12-01",
@@ -72,8 +72,8 @@
     {
       "start_date": "2026-12-15",
       "nights": 4,
-      "best_price": 8372,
-      "initial_price": 8808,
+      "best_price": 8530,
+      "initial_price": 8976,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -81,8 +81,8 @@
     {
       "start_date": "2026-12-15",
       "nights": 5,
-      "best_price": 12494,
-      "initial_price": 13872,
+      "best_price": 10260,
+      "initial_price": 11390,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -90,35 +90,8 @@
     {
       "start_date": "2026-12-15",
       "nights": 6,
-      "best_price": 16076,
-      "initial_price": 16916,
-      "currency": "SGD",
-      "discount_pct": 5.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2026-12-22",
-      "nights": 4,
-      "best_price": 13254,
-      "initial_price": 13254,
-      "currency": "SGD",
-      "discount_pct": 0.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2026-12-22",
-      "nights": 5,
-      "best_price": 15900,
-      "initial_price": 16732,
-      "currency": "SGD",
-      "discount_pct": 5.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2026-12-22",
-      "nights": 6,
-      "best_price": 19202,
-      "initial_price": 20206,
+      "best_price": 13164,
+      "initial_price": 13852,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -198,8 +171,8 @@
     {
       "start_date": "2027-01-26",
       "nights": 4,
-      "best_price": 8300,
-      "initial_price": 8734,
+      "best_price": 7910,
+      "initial_price": 8322,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -207,8 +180,8 @@
     {
       "start_date": "2027-01-26",
       "nights": 5,
-      "best_price": 18722,
-      "initial_price": 20792,
+      "best_price": 18830,
+      "initial_price": 20912,
       "currency": "SGD",
       "discount_pct": 10.0,
       "weekday": "Tue"
@@ -216,8 +189,8 @@
     {
       "start_date": "2027-01-26",
       "nights": 6,
-      "best_price": 22446,
-      "initial_price": 24928,
+      "best_price": 22626,
+      "initial_price": 25128,
       "currency": "SGD",
       "discount_pct": 10.0,
       "weekday": "Tue"
@@ -225,8 +198,8 @@
     {
       "start_date": "2027-02-02",
       "nights": 4,
-      "best_price": 7750,
-      "initial_price": 8154,
+      "best_price": 7870,
+      "initial_price": 8280,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -234,8 +207,8 @@
     {
       "start_date": "2027-02-02",
       "nights": 5,
-      "best_price": 9588,
-      "initial_price": 10644,
+      "best_price": 9702,
+      "initial_price": 10770,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -243,8 +216,8 @@
     {
       "start_date": "2027-02-02",
       "nights": 6,
-      "best_price": 11972,
-      "initial_price": 13290,
+      "best_price": 12086,
+      "initial_price": 13416,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -261,8 +234,8 @@
     {
       "start_date": "2027-02-09",
       "nights": 5,
-      "best_price": 10712,
-      "initial_price": 11892,
+      "best_price": 10748,
+      "initial_price": 11932,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -270,8 +243,8 @@
     {
       "start_date": "2027-02-09",
       "nights": 6,
-      "best_price": 12420,
-      "initial_price": 13788,
+      "best_price": 12492,
+      "initial_price": 13868,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -279,8 +252,8 @@
     {
       "start_date": "2027-02-16",
       "nights": 4,
-      "best_price": 8430,
-      "initial_price": 8430,
+      "best_price": 8534,
+      "initial_price": 8534,
       "currency": "SGD",
       "discount_pct": 0.0,
       "weekday": "Tue"
@@ -288,8 +261,17 @@
     {
       "start_date": "2027-02-16",
       "nights": 5,
-      "best_price": 11886,
-      "initial_price": 12506,
+      "best_price": 12108,
+      "initial_price": 12740,
+      "currency": "SGD",
+      "discount_pct": 5.0,
+      "weekday": "Tue"
+    },
+    {
+      "start_date": "2027-02-16",
+      "nights": 6,
+      "best_price": 14150,
+      "initial_price": 14888,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -351,8 +333,8 @@
     {
       "start_date": "2027-03-16",
       "nights": 5,
-      "best_price": 7264,
-      "initial_price": 7642,
+      "best_price": 7294,
+      "initial_price": 7672,
       "currency": "SGD",
       "discount_pct": 4.9,
       "weekday": "Tue"
@@ -360,8 +342,8 @@
     {
       "start_date": "2027-03-16",
       "nights": 6,
-      "best_price": 17418,
-      "initial_price": 18328,
+      "best_price": 17474,
+      "initial_price": 18388,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -414,8 +396,8 @@
     {
       "start_date": "2027-03-30",
       "nights": 6,
-      "best_price": 6822,
-      "initial_price": 7568,
+      "best_price": 6840,
+      "initial_price": 7588,
       "currency": "SGD",
       "discount_pct": 9.9,
       "weekday": "Tue"
@@ -423,8 +405,8 @@
     {
       "start_date": "2027-04-06",
       "nights": 4,
-      "best_price": 4272,
-      "initial_price": 4492,
+      "best_price": 4348,
+      "initial_price": 4572,
       "currency": "SGD",
       "discount_pct": 4.9,
       "weekday": "Tue"
@@ -432,8 +414,8 @@
     {
       "start_date": "2027-04-06",
       "nights": 5,
-      "best_price": 4916,
-      "initial_price": 5452,
+      "best_price": 4988,
+      "initial_price": 5532,
       "currency": "SGD",
       "discount_pct": 9.8,
       "weekday": "Tue"
@@ -441,8 +423,8 @@
     {
       "start_date": "2027-04-06",
       "nights": 6,
-      "best_price": 5778,
-      "initial_price": 6408,
+      "best_price": 5850,
+      "initial_price": 6488,
       "currency": "SGD",
       "discount_pct": 9.8,
       "weekday": "Tue"
