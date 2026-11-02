@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-01T02:22:41",
+  "generated": "2026-11-02T02:38:19",
   "product_id": "KIPC_WINTER",
   "range": [
     "2026-12-01",
@@ -121,15 +121,6 @@
       "initial_price": 13060,
       "currency": "SGD",
       "discount_pct": 5.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2026-12-29",
-      "nights": 5,
-      "best_price": 16284,
-      "initial_price": 18084,
-      "currency": "SGD",
-      "discount_pct": 10.0,
       "weekday": "Tue"
     },
     {
