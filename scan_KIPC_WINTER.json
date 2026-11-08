@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-06T03:30:24",
+  "generated": "2026-11-08T02:35:20",
   "product_id": "KIPC_WINTER",
   "range": [
     "2026-12-01",
@@ -144,35 +144,17 @@
     {
       "start_date": "2027-01-05",
       "nights": 4,
-      "best_price": 9784,
-      "initial_price": 9784,
+      "best_price": 12096,
+      "initial_price": 12096,
       "currency": "SGD",
       "discount_pct": 0.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2027-01-05",
-      "nights": 5,
-      "best_price": 11512,
-      "initial_price": 12114,
-      "currency": "SGD",
-      "discount_pct": 5.0,
-      "weekday": "Tue"
-    },
-    {
-      "start_date": "2027-01-05",
-      "nights": 6,
-      "best_price": 13954,
-      "initial_price": 14682,
-      "currency": "SGD",
-      "discount_pct": 5.0,
       "weekday": "Tue"
     },
     {
       "start_date": "2027-01-12",
       "nights": 4,
-      "best_price": 12200,
-      "initial_price": 12200,
+      "best_price": 9868,
+      "initial_price": 9868,
       "currency": "SGD",
       "discount_pct": 0.0,
       "weekday": "Tue"
@@ -180,8 +162,8 @@
     {
       "start_date": "2027-01-12",
       "nights": 5,
-      "best_price": 14454,
-      "initial_price": 15210,
+      "best_price": 11694,
+      "initial_price": 12304,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -189,8 +171,8 @@
     {
       "start_date": "2027-01-12",
       "nights": 6,
-      "best_price": 17310,
-      "initial_price": 18216,
+      "best_price": 14002,
+      "initial_price": 14734,
       "currency": "SGD",
       "discount_pct": 5.0,
       "weekday": "Tue"
@@ -369,8 +351,8 @@
     {
       "start_date": "2027-03-16",
       "nights": 4,
-      "best_price": 6092,
-      "initial_price": 6092,
+      "best_price": 10306,
+      "initial_price": 10306,
       "currency": "SGD",
       "discount_pct": 0.0,
       "weekday": "Tue"
@@ -378,19 +360,19 @@
     {
       "start_date": "2027-03-16",
       "nights": 5,
-      "best_price": 7294,
-      "initial_price": 7672,
+      "best_price": 14494,
+      "initial_price": 15252,
       "currency": "SGD",
-      "discount_pct": 4.9,
+      "discount_pct": 5.0,
       "weekday": "Tue"
     },
     {
       "start_date": "2027-03-16",
       "nights": 6,
-      "best_price": 8792,
-      "initial_price": 9248,
+      "best_price": 17474,
+      "initial_price": 18388,
       "currency": "SGD",
-      "discount_pct": 4.9,
+      "discount_pct": 5.0,
       "weekday": "Tue"
     },
     {
