@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-14T03:24:38",
+  "generated": "2026-11-16T02:53:59",
   "product_id": "KIPC_WINTER",
   "range": [
     "2026-12-01",
@@ -54,19 +54,19 @@
     {
       "start_date": "2026-12-08",
       "nights": 5,
-      "best_price": 6736,
+      "best_price": 7568,
       "initial_price": 8398,
       "currency": "SGD",
-      "discount_pct": 19.8,
+      "discount_pct": 9.9,
       "weekday": "Tue"
     },
     {
       "start_date": "2026-12-08",
       "nights": 6,
-      "best_price": 8374,
+      "best_price": 9406,
       "initial_price": 10440,
       "currency": "SGD",
-      "discount_pct": 19.8,
+      "discount_pct": 9.9,
       "weekday": "Tue"
     },
     {
@@ -243,8 +243,8 @@
     {
       "start_date": "2027-03-02",
       "nights": 4,
-      "best_price": 6352,
-      "initial_price": 6352,
+      "best_price": 6526,
+      "initial_price": 6526,
       "currency": "SGD",
       "discount_pct": 0.0,
       "weekday": "Tue"
@@ -306,8 +306,8 @@
     {
       "start_date": "2027-03-23",
       "nights": 4,
-      "best_price": 5534,
-      "initial_price": 5822,
+      "best_price": 5808,
+      "initial_price": 6110,
       "currency": "SGD",
       "discount_pct": 4.9,
       "weekday": "Tue"
